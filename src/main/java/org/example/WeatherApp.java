@@ -9,26 +9,22 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class WeatherApp {
-    private static final String API_KEY = "a57c83748d30441faf5143227241312";
-    private static final String BASE_URL = "https://api.weatherapi.com/v1/current.json";
+    private static final String DEFAULT_API_KEY = "a57c83748d30441faf5143227241312";
+    private final String baseUrl;
 
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Введите название города: ");
-        String city = scanner.nextLine();
-
-        try {
-            String weatherInfo = getWeather(city);
-            System.out.println(weatherInfo);
-        } catch (IOException e) {
-            System.err.println("Ошибка при получении данных: " + e.getMessage());
-        }
+    public WeatherApp() {
+        this.baseUrl = "https://api.weatherapi.com/v1/current.json";
     }
 
-    private static String getWeather(String city) throws IOException {
+    // Конструктор для тестов (позволяет подставить mock-сервер)
+    public WeatherApp(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
+
+    public String getWeather(String city) throws IOException {
         OkHttpClient client = new OkHttpClient();
 
-        String url = BASE_URL + "?key=" + API_KEY + "&q=" + city + "&aqi=no";
+        String url = baseUrl + "?key=" + DEFAULT_API_KEY + "&q=" + city + "&aqi=no";
         Request request = new Request.Builder().url(url).build();
 
         try (Response response = client.newCall(request).execute()) {
